@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { AsyncPipe, NgForOf } from '@angular/common';
 import { HolidayCardComponent } from '@app/holidays/ui';
 import { FormsModule } from '@angular/forms';
@@ -43,7 +43,7 @@ import {
       </div>
     </form>
     <div class="flex flex-wrap justify-evenly">
-      @for (holiday of holidays; track holiday.id) {
+      @for (holiday of holidays(); track holiday.id) {
         <app-holiday-card
           [holiday]="holiday"
           (addFavourite)="addFavourite($event)"
@@ -69,16 +69,16 @@ import {
 export class HolidaysComponent implements OnInit {
   holidaysService = inject(HolidaysService);
 
-  query = '';
-  type: HolidayType = 'all';
-  holidays: Holiday[] = [];
+  query = signal('');
+  type = signal<HolidayType>('all');
+  holidays=signal<Holiday[]>([]);
 
   ngOnInit(): void {
     this.search();
   }
 
   async search() {
-    this.holidays = await this.holidaysService.find(this.query, this.type);
+    this.holidays.set(await this.holidaysService.find(this.query(), this.type()));
   }
 
   addFavourite(id: number) {
