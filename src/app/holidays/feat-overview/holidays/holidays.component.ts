@@ -1,4 +1,5 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+/* eslint-disable prettier/prettier */
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { AsyncPipe, NgForOf } from '@angular/common';
 import { HolidayCardComponent } from '@app/holidays/ui';
 import { FormsModule } from '@angular/forms';
@@ -7,12 +8,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatButton } from '@angular/material/button';
+// eslint-disable-next-line @softarc/sheriff/deep-import
 import {
   HolidaysService,
   HolidayType,
   Holiday,
 } from '@app/holidays/data/holidays-service';
-
 @Component({
   selector: 'app-holidays',
   template: `<h2>Choose among our Holidays</h2>
@@ -42,6 +43,10 @@ import {
         <button color="primary" mat-raised-button>Search</button>
       </div>
     </form>
+    <div>
+      <p>{{prettySearch()}}</p>
+      <p>{{holidaysCount()}}</p>
+    </div>
     <div class="flex flex-wrap justify-evenly">
       @for (holiday of holidays(); track holiday.id) {
         <app-holiday-card
@@ -71,14 +76,19 @@ export class HolidaysComponent implements OnInit {
 
   query = signal('');
   type = signal<HolidayType>('all');
-  holidays=signal<Holiday[]>([]);
+  holidays = signal<Holiday[]>([]);
+
+  prettySearch =computed(()=> `Query ${this.query()} with type ${this.type()}`);
+  holidaysCount = computed(()=>`Holidays found ${this.holidays().length}`);
 
   ngOnInit(): void {
     this.search();
   }
 
   async search() {
-    this.holidays.set(await this.holidaysService.find(this.query(), this.type()));
+    this.holidays.set(
+      await this.holidaysService.find(this.query(), this.type()),
+    );
   }
 
   addFavourite(id: number) {

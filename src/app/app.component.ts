@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Component } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { HeaderComponent } from './core/header/header.component';

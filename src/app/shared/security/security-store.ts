@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { computed, inject, PLATFORM_ID } from '@angular/core';
 import { KeycloakService } from './keycloak-service';
 import {
